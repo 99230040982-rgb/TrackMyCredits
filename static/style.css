@@ -1,0 +1,253 @@
+/* === GLOBAL RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: url("images/background1.png") no-repeat center center fixed;
+  background-size: cover;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}
+
+/* Hide scrollbar but allow scrolling */
+html {
+  scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+/* === HEADER === */
+header {
+  background: rgba(235, 234, 234, 0.3);
+  padding: 8px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(139, 139, 139, 0.4);
+  border-radius: 10px;
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 60px;
+  z-index: 1000;
+}
+
+.logo-container img {
+  position: absolute;
+  height: 160%;
+  width: auto;
+  top: -16px;
+  left: -40px;
+}
+
+nav a {
+  margin-left: 25px;
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s;
+}
+
+nav a::after {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 0;
+  background: #000;
+  transition: width 0.3s ease;
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+}
+
+nav a:hover,
+nav a.active {
+  color: #1d3557;
+}
+
+nav a:hover::after,
+nav a.active::after {
+  width: 100%;
+}
+/* === NAVIGATION REFINED === */
+nav {
+  position: relative;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #1d3557;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Smooth underline on hover */
+.nav-links li a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #1d3557;
+  transition: width 0.3s ease;
+}
+
+.nav-links li a:hover::after {
+  width: 100%;
+}
+
+.nav-links li a:hover {
+  color: #0b2545;
+  background: rgba(29, 53, 87, 0.1);
+}
+
+/* Hamburger styling */
+.hamburger {
+  display: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: #1d3557;
+  transition: color 0.3s ease;
+}
+
+.hamburger:hover {
+  color: #0b2545;
+}
+
+/* === MOBILE MENU === */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+    z-index: 1100;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 65px;
+    right: 0;
+    width: 80%;
+    max-width: 300px;
+    background: rgba(255, 255, 255, 0.95);
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px 20px;
+    border-radius: 0 0 0 20px;
+    transform: translateX(120%);
+    transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+    box-shadow: -3px 3px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .nav-links.show {
+    transform: translateX(0);
+  }
+}
+
+/* === HERO SECTION === */
+.home-section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  color: #1d3557;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 25px;
+}
+
+/* === KNOW MORE BUTTON REFINED === */
+.know-more-btn {
+  background: linear-gradient(135deg, #1d3557, #457b9d);
+  color: #fff;
+  padding: 14px 35px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(29, 53, 87, 0.3);
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.know-more-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(29, 53, 87, 0.4);
+  background: linear-gradient(135deg, #0b2545, #1d3557);
+}
+
+/* === WELCOME SECTION === */
+.welcome-section {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.welcome-box {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 800px;
+  text-align: center;
+  color: #1d3557;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+/* === FOOTER === */
+footer {
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+footer a {
+  color: #1d3557;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+footer .credit {
+  margin-top: 10px;
+  color: #333;
+  font-size: 0.9rem;
+}

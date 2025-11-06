@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Dashboard | Track My Credits</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Main Theme CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='personalized.css') }}">
+</head>
+<body style="background: url({{ url_for('static', filename='images/background1.png') }}) no-repeat center center fixed; background-size: cover;">
+
+    <!-- Header -->
+    <header id="mainHeader">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo1" alt="Track My Credits">
+        </div>
+        <div class="dropdown">
+            <i class="bi bi-person-circle profile-icon" id="profileIcon"></i>
+            <div class="dropdown-content hidden" id="profileDropdown">
+                <p>{{ session['user'] }}</p>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-container">
+        <div class="dashboard-header">
+            <h2>Welcome, {{ session['user'] }}</h2>
+            <p>Track your academic credits and add your achievements below.</p>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <h3>{{ total_credits_earned }}</h3>
+                <p>Credits Earned</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ total_credits_remaining }}</h3>
+                <p>Credits Remaining</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ percentage_complete }}%</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+
+        <!-- 8 Category Cards -->
+        <div class="credit-grid">
+            {% for cat in categories %}
+            <div class="credit-card" data-category="{{ cat.code }}">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">{{ cat.title }}</h3>
+                        <p class="card-description">{{ cat.description }}</p>
+                    </div>
+                    <div class="card-icon">{{ cat.code | upper }}</div>
+                </div>
+                <div class="card-progress">
+                    <div class="card-progress-info">
+                        <span>{{ cat.earned }} / {{ cat.total }} credits</span>
+                        <span>{{ ((cat.earned / cat.total) * 100) | round(0) }}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ ((cat.earned / cat.total) * 100) | round(0) }}%;"></div>
+                    </div>
+                </div>
+                <button class="view-details-btn" data-category="{{ cat.code }}">View Details</button>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Detail Modal -->
+    <!-- Detail Modal -->
+<div id="detail-modal" class="modal hidden">
+  <div class="modal-content">
+    <button class="modal-close" id="closeModal">&times;</button>
+    <h2>Category: <span id="modal-category"></span></h2>
+
+    <!-- === TWO COLUMN MODAL LAYOUT === -->
+    <div class="modal-sections">
+      <!-- COURSE HISTORY SECTION -->
+      <div class="course-history-section">
+        <h3>📘 Course History</h3>
+        <div id="modal-course-list">
+          <p class="no-course">No courses added yet.</p>
+        </div>
+      </div>
+
+      <!-- ADD COURSE SECTION -->
+      <div class="add-course-section">
+        <h3>➕ Add New Course</h3>
+        <form id="addCourseForm" method="POST" action="{{ url_for('add_course') }}">
+          <input type="hidden" id="category_code" name="category_code" />
+          <input type="text" name="course_name" placeholder="Course Name" required>
+          <input type="number" name="course_credits" placeholder="Credits" required>
+          <input type="text" name="course_grade" placeholder="Grade (A, B+, etc)">
+          <button type="submit">Add Course</button>
+        </form>
+      </div>
+      </div>
+        </div>
+    </div>
+
+    <!-- Inject Course Data as JSON -->
+    <script id="courseDataJSON" type="application/json">
+        {{ course_dict | tojson }}
+    </script>
+
+    <!-- JS Files -->
+    <script src="{{ url_for('static', filename='personalized.js') }}" defer></script>
+</body>
+</html>

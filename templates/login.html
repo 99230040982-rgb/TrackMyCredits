@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Track My Credits</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f5f9ff;
+    }
+
+    /* === LOGIN SECTION === */
+    .login-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0px 20px;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      background: #ffffff;
+      padding: 35px 30px;
+      border-radius: 15px;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 300px;   
+      position: relative;
+    }
+
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .logo img {
+      max-height: 4em;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      color: #1d3557;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #457b9d;
+    }
+
+    .form-group input {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.3s;
+      width: 90%;
+    }
+
+    .form-group input:focus {
+      border-color: #1d3557;
+    }
+
+    .login-btn {
+      background-color: #1d3557;
+      color: #fff;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .login-btn:hover {
+      background-color: #457b9d;
+    }
+
+    .bottom {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .bottom a {
+      color: #1d3557;
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 5px;
+    }
+
+    .bottom a:hover {
+      text-decoration: underline;
+    }
+
+    .flash {
+      color: red;
+      font-weight: 500;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    /* === FORGOT PASSWORD LINK === */
+    .forgot-link {
+      text-align: right;
+      font-weight: 500;
+      color: #457b9d;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: -8px;
+      transition: color 0.3s;
+    }
+
+    .forgot-link:hover {
+      color: #1d3557;
+      text-decoration: underline;
+    }
+
+    /* === MODAL === */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.9);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal h3 {
+      color: #1d3557;
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+    }
+
+    .modal p {
+      color: #333;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .modal button {
+      background: linear-gradient(135deg, #1d3557, #457b9d);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    .modal button:hover {
+      background: linear-gradient(135deg, #0b2545, #1d3557);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: #1d3557;
+    }
+
+    </style>
+</head>
+<body>
+<section class="login-section">
+  <div class="login-container">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+    </div>
+    <h2>Welcome Back</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+       <p class="flash">{{ messages[-1] }}</p>
+      {% endif %}
+    {% endwith %}
+
+    <form id="LoginForm" method="post" action="{{ url_for('login') }}">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="pass" name="password" required>
+      </div>
+
+      <p class="forgot-link" id="forgotBtn">Forgot Password?</p>
+
+      <button type="submit" class="login-btn">Login</button>
+
+      <div class="bottom">
+        <p>Don't have an account? <a href="/register">Register</a></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- === FORGOT PASSWORD MODAL === -->
+<div class="modal hidden" id="forgotModal">
+  <div class="modal-content">
+    <button class="modal-close" id="closeModal">&times;</button>
+    <h3>Forgot Password?</h3>
+    <p>
+      To reset your password, please send an official email from your college mail ID to our admin.<br><br>
+      📎 Attach your **college ID card photo** for verification.<br><br>
+      Once verified, the admin will update your password in the system.
+    </p>
+    <a href="https://mail.google.com/mail/?view=cm&to=trackmycredits.devteam@gmail.com" target="_blank">
+      <button>Send Email to Admin</button>
+    </a>
+  </div>
+</div>
+
+<script>
+  // Modal open & close
+  const forgotBtn = document.getElementById("forgotBtn");
+  const forgotModal = document.getElementById("forgotModal");
+  const closeModal = document.getElementById("closeModal");
+
+  forgotBtn.addEventListener("click", () => {
+    forgotModal.classList.remove("hidden");
+  });
+
+  closeModal.addEventListener("click", () => {
+    forgotModal.classList.add("hidden");
+  });
+
+  window.addEventListener("click", (e) => {
+    if (e.target === forgotModal) {
+      forgotModal.classList.add("hidden");
+    }
+  });
+
+  // Reset login form on submit
+  document.getElementById("LoginForm").onsubmit = function(){
+    setTimeout(() => {
+      document.getElementById("LoginForm").reset();
+    }, 300);
+  };
+</script>
+
+</body>
+</html>

@@ -192,7 +192,6 @@ def add_course():
     )
     db.session.add(new_course)
     db.session.commit()
-    flash("✅ Course added successfully!")
     return redirect(url_for('personalized'))
 
 @app.route('/delete_course', methods=['POST'])

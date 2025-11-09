@@ -1,20 +1,19 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-import os, smtplib, webbrowser
 import os, smtplib
 
 # === Flask App Config ===
 app = Flask(__name__)
-app.secret_key = 'Hello'
 app.secret_key = os.environ.get('SECRET_KEY', 'Hello')
 
 # === Database Config ===
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://trackmycredits_user:8TDV2bRp6oXjYao7aWr1AiyNPJdS4p71@dpg-d46fgcchg0os738saom0-a/trackmycredits')
 database_url = os.environ.get('DATABASE_URL')
-# Railway gives "postgres://" — SQLAlchemy needs "postgresql://"
+
+# Render/Railway sometimes use "postgres://" — SQLAlchemy expects "postgresql://"
 if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///TrackMyCredits.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -47,22 +46,30 @@ class ContactMessage(db.Model):
     feedback = db.Column(db.Text)
     submitted_at = db.Column(db.DateTime, server_default=db.func.now())
 
-# === Initialize DB ===
-with app.app_context():
-    db.create_all()
+# === Initialize Database Tables (only if missing) ===
+def init_db_once():
+    with app.app_context():
+        inspector = db.inspect(db.engine)
+        tables = inspector.get_table_names()
+        required_tables = ['users', 'courses', 'contact_messages']
+
+        missing = [t for t in required_tables if t not in tables]
+        if missing:
+            print(f"🛠 Creating missing tables: {missing}")
+            db.create_all()
+        else:
+            print("✅ Database tables already exist — skipping creation.")
+
+init_db_once()
 
 # === Helper: Email ===
 def send_email(recipient):
     sender = "trackmycredits.devteam@gmail.com"
-    password = "hpsm vznm npno waat"  # (add if needed for real email)
-    subject = f"Welcome to Track My Credits – Registration Successful!"
-    message = (f"Hello {recipient},\n\n"
-               f"Thank you for registering with Track My Credits.\n"
-               f"You can now log in and track your academic credits.\n")
-    password = "hpsm vznm npno waat"  # (App Password - only if sending real emails)
+    password = "hpsm vznm npno waat"  # Gmail App Password
     subject = "Welcome to Track My Credits – Registration Successful!"
     message = f"Hello {recipient},\n\nThank you for registering with Track My Credits.\nYou can now log in and track your academic credits.\n"
     email_message = f"Subject: {subject}\n\n{message}"
+
     try:
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
@@ -72,7 +79,6 @@ def send_email(recipient):
     except Exception as e:
         print(f"❌ Email error: {e}")
 
-# === 8 Credit Categories ===
 # === Credit Categories ===
 CATEGORIES = [
     {"code": "ec", "title": "Experiential Core", "description": "Hands-on learning bridging theory and practice.", "total": 16},
@@ -107,7 +113,6 @@ def contact():
         )
         db.session.add(msg)
         db.session.commit()
-        flash("✅ Feedback submitted successfully!")
         return redirect(url_for('contact'))
     return render_template('contact.html')
 
@@ -170,13 +175,15 @@ def personalized():
     total_possible = sum(c['total'] for c in CATEGORIES)
     percent_complete = round((total_earned / total_possible) * 100)
 
-    return render_template('personalized.html',
-                           username=username,
-                           categories=CATEGORIES,
-                           course_dict=course_dict,
-                           total_credits_earned=total_earned,
-                           total_credits_remaining=total_possible - total_earned,
-                           percentage_complete=percent_complete)
+    return render_template(
+        'personalized.html',
+        username=username,
+        categories=CATEGORIES,
+        course_dict=course_dict,
+        total_credits_earned=total_earned,
+        total_credits_remaining=total_possible - total_earned,
+        percentage_complete=percent_complete
+    )
 
 @app.route('/logout')
 def logout():
